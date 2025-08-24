@@ -6,109 +6,51 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    /* Corporate Blue-Purple Gradient Theme */
-    --primary: 240 100% 27%;
+    /* Dark Corporate Theme - Blue-Purple Gradient */
+    --primary: 220 85% 57%;
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 240 100% 35%;
-    
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --primary-glow: 240 85% 70%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --secondary: 240 20% 15%;
+    --secondary-foreground: 0 0% 95%;
 
-    --accent: 250 100% 60%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 240 30% 20%;
+    --accent-foreground: 0 0% 95%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --muted: 240 10% 10%;
+    --muted-foreground: 240 5% 65%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 240 100% 27%;
+    --card: 240 15% 8%;
+    --card-foreground: 0 0% 95%;
 
-    /* Corporate Design Tokens */
-    --corporate-blue: 240 100% 27%;
-    --corporate-purple: 280 100% 50%;
-    --corporate-light: 240 25% 95%;
-    --corporate-dark: 222.2 84% 4.9%;
-    
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(240 100% 27%), hsl(280 100% 50%));
-    --gradient-secondary: linear-gradient(135deg, hsl(240 25% 95%), hsl(0 0% 100%));
-    --gradient-hero: linear-gradient(135deg, hsl(240 100% 27%) 0%, hsl(280 100% 50%) 100%);
-    
-    /* Shadows */
-    --shadow-corporate: 0 10px 30px -10px hsl(240 100% 27% / 0.3);
-    --shadow-elegant: 0 25px 50px -12px hsl(240 100% 27% / 0.25);
-    --shadow-glow: 0 0 40px hsl(280 100% 50% / 0.2);
-    
-    /* Animations */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --border: 240 20% 18%;
+    --input: 240 20% 18%;
 
+    --background: 240 15% 5%;
+    --foreground: 0 0% 95%;
+
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 98%;
+
+    --ring: 220 85% 57%;
     --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* Corporate specific colors */
+    --corporate-dark: 240 25% 8%;
+    --corporate-light: 240 20% 12%;
+    --corporate-accent: 280 70% 60%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    /* Gradients */
+    --gradient-corporate: linear-gradient(135deg, hsl(220 85% 57%), hsl(280 70% 60%));
+    --gradient-hero: linear-gradient(135deg, hsl(240 25% 8%), hsl(220 85% 57%), hsl(280 70% 60%));
 
-    --sidebar-primary: 240 5.9% 10%;
+    /* Shadows */
+    --shadow-corporate: 0 10px 30px -10px hsl(220 85% 57% / 0.3);
+    --shadow-glow: 0 0 40px hsl(240 85% 70% / 0.4);
 
-    --sidebar-primary-foreground: 0 0% 98%;
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 280 100% 50%;
-    --primary-foreground: 0 0% 100%;
-    --primary-hover: 280 100% 60%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 240 100% 60%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 280 100% 50%;
-    
-    /* Dark mode gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(280 100% 50%), hsl(240 100% 60%));
-    --gradient-secondary: linear-gradient(135deg, hsl(217.2 32.6% 17.5%), hsl(222.2 84% 4.9%));
-    --gradient-hero: linear-gradient(135deg, hsl(280 100% 50%) 0%, hsl(240 100% 60%) 100%);
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -126,7 +68,7 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background text-foreground font-body antialiased dark;
   }
   
   html {
@@ -137,21 +79,21 @@
 @layer components {
   /* Corporate Button Components */
   .btn-corporate {
-    @apply bg-gradient-to-r from-[hsl(var(--corporate-blue))] to-[hsl(var(--corporate-purple))] text-white px-8 py-3 rounded-xl font-semibold shadow-[var(--shadow-corporate)] hover:shadow-[var(--shadow-elegant)] transition-[var(--transition-smooth)] hover:scale-105;
+    @apply bg-gradient-corporate text-white px-8 py-3 rounded-xl font-semibold shadow-corporate hover:shadow-glow transition-[var(--transition-smooth)] hover:scale-105;
   }
   
   .btn-outline-corporate {
-    @apply border-2 border-[hsl(var(--corporate-blue))] text-[hsl(var(--corporate-blue))] px-8 py-3 rounded-xl font-semibold hover:bg-[hsl(var(--corporate-blue))] hover:text-white transition-[var(--transition-smooth)];
+    @apply border-2 border-primary text-primary px-8 py-3 rounded-xl font-semibold hover:bg-primary hover:text-white transition-[var(--transition-smooth)];
   }
   
   /* Navigation Components */
   .nav-link {
-    @apply text-foreground hover:text-[hsl(var(--corporate-blue))] transition-[var(--transition-smooth)] font-medium relative;
+    @apply text-foreground hover:text-primary transition-[var(--transition-smooth)] font-medium relative;
   }
   
   .nav-link::after {
     content: '';
-    @apply absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-[hsl(var(--corporate-blue))] to-[hsl(var(--corporate-purple))] transition-all duration-300;
+    @apply absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-corporate transition-all duration-300;
   }
   
   .nav-link:hover::after {
@@ -165,7 +107,12 @@
   
   /* Cards */
   .card-corporate {
-    @apply bg-card border border-border rounded-2xl p-8 shadow-lg hover:shadow-[var(--shadow-corporate)] transition-[var(--transition-smooth)] hover:-translate-y-1;
+    @apply bg-card border border-border rounded-2xl p-8 shadow-lg hover:shadow-corporate transition-[var(--transition-smooth)] hover:-translate-y-1;
+  }
+  
+  /* Background Colors */
+  .bg-corporate-light {
+    @apply bg-muted;
   }
   
   /* Animations */ 
