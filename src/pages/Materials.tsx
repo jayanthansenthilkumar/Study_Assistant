@@ -94,13 +94,13 @@ const Materials = () => {
       if (editingMaterial) {
         const { error } = await supabase
           .from("study_materials")
+          // @ts-expect-error Supabase type inference issue
           .update({
             title: formData.title,
             description: formData.description,
             category: formData.category,
             url: formData.url || null,
-            updated_at: new Date().toISOString(),
-          } as any)
+          })
           .eq("id", editingMaterial.id);
 
         if (error) throw error;

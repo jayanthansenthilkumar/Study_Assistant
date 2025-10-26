@@ -87,12 +87,12 @@ const Notes = () => {
       if (editingNote) {
         const { error } = await supabase
           .from("notes")
+          // @ts-expect-error Supabase type inference issue
           .update({
             title: formData.title,
             content: formData.content,
             tags: tagsArray,
-            updated_at: new Date().toISOString(),
-          } as any)
+          })
           .eq("id", editingNote.id);
 
         if (error) throw error;

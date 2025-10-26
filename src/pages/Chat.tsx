@@ -94,7 +94,8 @@ const Chat = () => {
         .single();
 
       if (error) throw error;
-      return data?.id || null;
+      if (!data) return null;
+      return (data as any).id;
     } catch (error: any) {
       toast({
         title: "Error creating session",
