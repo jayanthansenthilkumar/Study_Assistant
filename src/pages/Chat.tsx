@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Send, Loader2 } from "lucide-react";
+import { ArrowLeft, Send, Loader2, Bot, User, Brain } from "lucide-react";
 import { Session } from "@supabase/supabase-js";
 
 interface Message {
@@ -87,13 +88,13 @@ const Chat = () => {
         .from("chat_sessions")
         .insert({
           user_id: session.user.id,
-          title: firstMessage.substring(0, 50) + (firstMessage.length > 50 ? "..." : ""),
-        })
+          title: firstMessage.substring(0, 50) || "New Chat",
+        } as any)
         .select()
         .single();
 
       if (error) throw error;
-      return data.id;
+      return data?.id || null;
     } catch (error: any) {
       toast({
         title: "Error creating session",
@@ -106,25 +107,21 @@ const Chat = () => {
 
   const saveMessage = async (sessionId: string, role: "user" | "assistant", content: string) => {
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from("chat_messages")
         .insert({
           session_id: sessionId,
           role,
           content,
-        })
-        .select()
-        .single();
+        } as any);
 
       if (error) throw error;
-      return data;
     } catch (error: any) {
       toast({
         title: "Error saving message",
         description: error.message,
         variant: "destructive",
       });
-      return null;
     }
   };
 
@@ -149,10 +146,14 @@ const Chat = () => {
       }
 
       // Save user message
-      const userMsg = await saveMessage(activeSessionId, "user", userMessage);
-      if (userMsg) {
-        setMessages((prev) => [...prev, userMsg as Message]);
-      }
+      await saveMessage(activeSessionId, "user", userMessage);
+      setMessages((prev) => [...prev, {
+        id: Date.now().toString(),
+        role: "user",
+        content: userMessage,
+        session_id: activeSessionId,
+        created_at: new Date().toISOString(),
+      }]);
 
       // Get AI response
       const { data, error } = await supabase.functions.invoke("chat", {
@@ -167,10 +168,14 @@ const Chat = () => {
       if (error) throw error;
 
       // Save AI response
-      const aiMsg = await saveMessage(activeSessionId, "assistant", data.response);
-      if (aiMsg) {
-        setMessages((prev) => [...prev, aiMsg as Message]);
-      }
+      await saveMessage(activeSessionId, "assistant", data.response);
+      setMessages((prev) => [...prev, {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: data.response,
+        session_id: activeSessionId,
+        created_at: new Date().toISOString(),
+      }]);
     } catch (error: any) {
       toast({
         title: "Error",
@@ -190,69 +195,89 @@ const Chat = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-secondary to-background flex flex-col">
-      {/* Header */}
-      <header className="border-b border-border/50 bg-card/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4 flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate("/")}>
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            AI Study Chat
-          </h1>
-        </div>
-      </header>
-
+    <div className="flex flex-col h-full bg-background">
       {/* Messages */}
       <ScrollArea className="flex-1 container mx-auto px-4 py-6" ref={scrollRef}>
-        <div className="max-w-3xl mx-auto space-y-4">
+        <div className="max-w-4xl mx-auto space-y-6">
           {messages.length === 0 && (
             <div className="text-center py-12">
-              <div className="text-6xl mb-4">💬</div>
-              <h2 className="text-2xl font-bold mb-2">Start a conversation</h2>
-              <p className="text-muted-foreground">Ask me anything - from general knowledge to VLSI topics!</p>
+              <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                <Brain className="h-10 w-10 text-primary" />
+              </div>
+              <h2 className="text-2xl font-bold mb-2">Start a Conversation</h2>
+              <p className="text-muted-foreground max-w-md mx-auto">
+                Ask me anything - from general knowledge to VLSI topics, math problems, or anything you're curious about!
+              </p>
             </div>
           )}
           {messages.map((message) => (
-            <Card
+            <div
               key={message.id}
-              className={`p-4 ${
-                message.role === "user"
-                  ? "ml-auto bg-primary text-primary-foreground max-w-[80%]"
-                  : "mr-auto bg-card max-w-[80%]"
-              }`}
+              className={`flex gap-4 ${message.role === "user" ? "justify-end" : "justify-start"}`}
             >
-              <div className="whitespace-pre-wrap break-words">{message.content}</div>
-            </Card>
+              {message.role === "assistant" && (
+                <Avatar className="h-8 w-8 border-2 border-primary/20">
+                  <AvatarFallback className="bg-gradient-to-br from-primary to-primary/60">
+                    <Bot className="h-4 w-4 text-white" />
+                  </AvatarFallback>
+                </Avatar>
+              )}
+              <Card
+                className={`max-w-[75%] ${
+                  message.role === "user"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-card border-border/50"
+                }`}
+              >
+                <div className="p-4 whitespace-pre-wrap break-words">
+                  {message.content}
+                </div>
+              </Card>
+              {message.role === "user" && (
+                <Avatar className="h-8 w-8 border-2 border-primary/20">
+                  <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600">
+                    <User className="h-4 w-4 text-white" />
+                  </AvatarFallback>
+                </Avatar>
+              )}
+            </div>
           ))}
           {loading && (
-            <Card className="p-4 mr-auto bg-card max-w-[80%]">
-              <div className="flex items-center gap-2">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                <span className="text-muted-foreground">Thinking...</span>
-              </div>
-            </Card>
+            <div className="flex gap-4 justify-start">
+              <Avatar className="h-8 w-8 border-2 border-primary/20">
+                <AvatarFallback className="bg-gradient-to-br from-primary to-primary/60">
+                  <Bot className="h-4 w-4 text-white" />
+                </AvatarFallback>
+              </Avatar>
+              <Card className="bg-card border-border/50">
+                <div className="p-4 flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                  <span className="text-muted-foreground">Thinking...</span>
+                </div>
+              </Card>
+            </div>
           )}
           <div ref={messagesEndRef} />
         </div>
       </ScrollArea>
 
       {/* Input */}
-      <div className="border-t border-border/50 bg-card/50 backdrop-blur-sm">
+      <div className="border-t bg-card/50 backdrop-blur-sm flex-shrink-0 sticky bottom-0">
         <div className="container mx-auto px-4 py-4">
-          <div className="max-w-3xl mx-auto flex gap-2">
+          <div className="max-w-4xl mx-auto flex gap-2">
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Ask anything... (e.g., 'Explain CMOS technology' or 'What time is it?')"
               disabled={loading}
-              className="flex-1"
+              className="flex-1 bg-background"
             />
             <Button
               onClick={handleSend}
               disabled={loading || !input.trim()}
-              className="bg-gradient-to-r from-primary to-accent hover:opacity-90"
+              size="icon"
+              className="bg-primary hover:bg-primary/90"
             >
               <Send className="h-4 w-4" />
             </Button>

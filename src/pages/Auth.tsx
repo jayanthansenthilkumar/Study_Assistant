@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2 } from "lucide-react";
+import { Loader2, Brain, Mail, Lock } from "lucide-react";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -39,7 +39,7 @@ const Auth = () => {
         if (error) throw error;
 
         toast({
-          title: "Welcome back! 📚",
+          title: "Welcome back!",
           description: "Login successful",
         });
         navigate("/");
@@ -55,7 +55,7 @@ const Auth = () => {
         if (error) throw error;
 
         toast({
-          title: "Account created! 🎉",
+          title: "Account created!",
           description: "You can now sign in",
         });
         setIsLogin(true);
@@ -72,79 +72,98 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background via-secondary to-background">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-20 text-6xl animate-bounce" style={{ animationDelay: "0s", animationDuration: "3s" }}>
-          😊
-        </div>
-        <div className="absolute top-40 right-32 text-6xl animate-bounce" style={{ animationDelay: "0.5s", animationDuration: "3.5s" }}>
-          💪
-        </div>
-        <div className="absolute bottom-32 left-40 text-6xl animate-bounce" style={{ animationDelay: "1s", animationDuration: "4s" }}>
-          📚
-        </div>
-        <div className="absolute bottom-20 right-20 text-6xl animate-bounce" style={{ animationDelay: "1.5s", animationDuration: "3.2s" }}>
-          ✨
-        </div>
-      </div>
-
-      <Card className="w-full max-w-md shadow-lg border-primary/10 relative z-10">
-        <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            Study AI Assistant
-          </CardTitle>
-          <CardDescription>
-            {isLogin ? "Welcome back! Sign in to continue learning" : "Create an account to start your learning journey"}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleAuth} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                disabled={loading}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                disabled={loading}
-                minLength={6}
-              />
-            </div>
-            <Button 
-              type="submit" 
-              className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
-              disabled={loading}
-            >
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {isLogin ? "Sign In" : "Sign Up"}
-            </Button>
-          </form>
-          <div className="mt-4 text-center text-sm">
-            <button
-              type="button"
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-primary hover:underline"
-              disabled={loading}
-            >
-              {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
-            </button>
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background to-secondary">
+      <div className="w-full max-w-md">
+        {/* Logo and Branding */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-gradient-to-br from-primary to-primary/60 mb-4">
+            <Brain className="h-8 w-8 text-white" />
           </div>
-        </CardContent>
-      </Card>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Study Assistant</h1>
+          <p className="text-muted-foreground">AI-Powered Learning Platform</p>
+        </div>
+
+        {/* Auth Card */}
+        <Card className="border-border/50 shadow-xl">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl text-center">
+              {isLogin ? "Welcome Back" : "Create Account"}
+            </CardTitle>
+            <CardDescription className="text-center">
+              {isLogin 
+                ? "Sign in to continue your learning journey" 
+                : "Start your journey with AI-powered learning"}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleAuth} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email" className="flex items-center gap-2">
+                  <Mail className="h-4 w-4" />
+                  Email
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={loading}
+                  className="bg-background"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password" className="flex items-center gap-2">
+                  <Lock className="h-4 w-4" />
+                  Password
+                </Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  disabled={loading}
+                  minLength={6}
+                  className="bg-background"
+                />
+                {!isLogin && (
+                  <p className="text-xs text-muted-foreground">
+                    Password must be at least 6 characters
+                  </p>
+                )}
+              </div>
+              <Button 
+                type="submit" 
+                className="w-full bg-gradient-to-r from-primary to-primary/80 hover:opacity-90"
+                disabled={loading}
+              >
+                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isLogin ? "Sign In" : "Create Account"}
+              </Button>
+            </form>
+            <div className="mt-6 text-center">
+              <button
+                type="button"
+                onClick={() => setIsLogin(!isLogin)}
+                className="text-sm text-primary hover:underline"
+                disabled={loading}
+              >
+                {isLogin 
+                  ? "Don't have an account? Sign up" 
+                  : "Already have an account? Sign in"}
+              </button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Footer */}
+        <p className="text-center text-xs text-muted-foreground mt-6">
+          By continuing, you agree to our Terms of Service and Privacy Policy
+        </p>
+      </div>
     </div>
   );
 };

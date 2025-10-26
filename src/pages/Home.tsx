@@ -4,13 +4,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { MessageSquarePlus, History, LogOut, Loader2 } from "lucide-react";
+import { MessageSquarePlus, History, LogOut, Loader2, BookOpen, Brain, TrendingUp, Clock } from "lucide-react";
 import ChatHistory from "@/components/ChatHistory";
 import { Session } from "@supabase/supabase-js";
 
 const Home = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({ totalChats: 0, todayChats: 0 });
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -21,6 +22,8 @@ const Home = () => {
       setLoading(false);
       if (!session) {
         navigate("/auth");
+      } else {
+        fetchStats();
       }
     });
 
@@ -34,6 +37,29 @@ const Home = () => {
 
     return () => subscription.unsubscribe();
   }, [navigate]);
+
+  const fetchStats = async () => {
+    try {
+      const { count: totalCount } = await supabase
+        .from("chat_sessions")
+        .select("*", { count: "exact", head: true });
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      const { count: todayCount } = await supabase
+        .from("chat_sessions")
+        .select("*", { count: "exact", head: true })
+        .gte("created_at", today.toISOString());
+
+      setStats({
+        totalChats: totalCount || 0,
+        todayChats: todayCount || 0,
+      });
+    } catch (error) {
+      console.error("Error fetching stats:", error);
+    }
+  };
 
   const handleSignOut = async () => {
     const { error } = await supabase.auth.signOut();
@@ -52,40 +78,27 @@ const Home = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-secondary to-background">
-      {/* Floating emojis background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-20 text-6xl animate-bounce opacity-30" style={{ animationDelay: "0s", animationDuration: "3s" }}>
-          😊
-        </div>
-        <div className="absolute top-40 right-32 text-6xl animate-bounce opacity-30" style={{ animationDelay: "0.5s", animationDuration: "3.5s" }}>
-          💪
-        </div>
-        <div className="absolute bottom-32 left-40 text-6xl animate-bounce opacity-30" style={{ animationDelay: "1s", animationDuration: "4s" }}>
-          📚
-        </div>
-        <div className="absolute top-1/2 right-1/4 text-6xl animate-bounce opacity-30" style={{ animationDelay: "1.5s", animationDuration: "3.2s" }}>
-          ✨
-        </div>
-        <div className="absolute bottom-20 right-20 text-6xl animate-bounce opacity-30" style={{ animationDelay: "2s", animationDuration: "3.8s" }}>
-          🎯
-        </div>
-      </div>
-
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="relative z-10 border-b border-border/50 bg-card/50 backdrop-blur-sm">
+      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            Study AI Assistant
-          </h1>
-          <Button variant="outline" onClick={handleSignOut}>
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
+              <Brain className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-foreground">Study Assistant</h1>
+              <p className="text-xs text-muted-foreground">AI-Powered Learning</p>
+            </div>
+          </div>
+          <Button variant="outline" onClick={handleSignOut} size="sm">
             <LogOut className="mr-2 h-4 w-4" />
             Sign Out
           </Button>
@@ -93,39 +106,91 @@ const Home = () => {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-12 relative z-10">
-        <div className="max-w-4xl mx-auto space-y-8">
-          {/* Welcome Card */}
-          <Card className="border-primary/20 shadow-lg">
-            <CardHeader className="text-center">
-              <CardTitle className="text-3xl mb-2">
-                Welcome back, learner! 🎓
-              </CardTitle>
-              <CardDescription className="text-lg">
-                Ready to explore knowledge and get answers to your questions?
+      <main className="container mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto space-y-8">
+          {/* Welcome Section */}
+          <div className="space-y-2">
+            <h2 className="text-3xl font-bold text-foreground">
+              Welcome back! 👋
+            </h2>
+            <p className="text-muted-foreground text-lg">
+              Ready to continue your learning journey?
+            </p>
+          </div>
+
+          {/* Stats Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card className="border-l-4 border-l-primary">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <BookOpen className="h-4 w-4" />
+                  Total Conversations
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-foreground">{stats.totalChats}</div>
+                <p className="text-xs text-muted-foreground mt-1">All time</p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-l-4 border-l-blue-500">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <Clock className="h-4 w-4" />
+                  Today's Sessions
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-foreground">{stats.todayChats}</div>
+                <p className="text-xs text-muted-foreground mt-1">Started today</p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-l-4 border-l-green-500">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4" />
+                  Learning Streak
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-foreground">
+                  {stats.todayChats > 0 ? "Active" : "Start"}
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">Keep it up!</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Quick Actions */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-xl">Quick Actions</CardTitle>
+              <CardDescription>
+                Start a new conversation or continue where you left off
               </CardDescription>
             </CardHeader>
-            <CardContent className="flex justify-center">
+            <CardContent>
               <Button 
                 onClick={startNewChat}
                 size="lg"
-                className="bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-all transform hover:scale-105"
+                className="w-full sm:w-auto bg-gradient-to-r from-primary to-primary/80 hover:opacity-90"
               >
                 <MessageSquarePlus className="mr-2 h-5 w-5" />
-                Let's Start the Chat
+                Start New Conversation
               </Button>
             </CardContent>
           </Card>
 
           {/* Chat History */}
-          <Card className="border-primary/20 shadow-lg">
+          <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <History className="h-5 w-5" />
-                History of Chats
+                Recent Conversations
               </CardTitle>
               <CardDescription>
-                Review your previous conversations and continue where you left off
+                View and continue your previous chat sessions
               </CardDescription>
             </CardHeader>
             <CardContent>
