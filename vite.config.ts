@@ -5,7 +5,7 @@ import path from "path";
 // https://vitejs.dev/config/
 export default defineConfig({
   server: {
-    host: "::",
+    host: "study-assistant-pe0r.onrender.com",
     port: 8080,
   },
   plugins: [react()],
