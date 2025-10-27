@@ -125,6 +125,10 @@ const Notes = () => {
   };
 
   const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this note? This action cannot be undone.")) {
+      return;
+    }
+    
     try {
       const { error } = await supabase
         .from("notes")

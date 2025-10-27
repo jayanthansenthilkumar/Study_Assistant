@@ -134,6 +134,10 @@ const Materials = () => {
   };
 
   const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this material? This action cannot be undone.")) {
+      return;
+    }
+    
     try {
       const { error } = await supabase
         .from("study_materials")
